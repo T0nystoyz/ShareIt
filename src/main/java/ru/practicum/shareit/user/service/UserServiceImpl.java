@@ -23,22 +23,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO create(UserDTO userDto) {
+        validateUserDto(userDto);
+        User user = UserMapper.toUser(userDto);
+        return UserMapper.toDto(userRepository.create(user));
+
+    }
+
+    private void validateUserDto(UserDTO userDto) {
         if (readAll().stream().anyMatch(user -> user.getEmail().equals(userDto.getEmail()))) {
-            log.info(String.format("пользователь с почтовым ящиком %s уже зарегистрирован", userDto.getEmail()));
+            log.info("пользователь с почтовым ящиком {} уже зарегистрирован", userDto.getEmail());
             throw new UniqueEmailException(String.format("пользователь с почтовым ящиком %s уже зарегистрирован", userDto.getEmail()));
         }
         if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
             log.info("создание пользователя без почтового ящика");
             throw new ValidationException("нельзя создать пользователя без почтового ящика");
         }
-        User user = UserMapper.toUser(userDto);
-        return UserMapper.toDto(userRepository.create(user));
-
     }
 
     @Override
     public UserDTO read(long userId) {
-        log.info(String.format("чтение пользователя с id=%d", userId));
+        log.info("чтение пользователя с id={}", userId);
         return UserMapper.toDto(userRepository.read(userId));
     }
 
@@ -49,7 +53,7 @@ public class UserServiceImpl implements UserService {
             userForUpdate.setName(userDto.getName());
         }
         if (readAll().stream().anyMatch(user -> user.getEmail().equals(userDto.getEmail()))) {
-            log.info(String.format("пользователь с почтовым ящиком %s уже зарегистрирован", userDto.getEmail()));
+            log.info("пользователь с почтовым ящиком {} уже зарегистрирован", userDto.getEmail());
             throw new UniqueEmailException(String.format("пользователь с почтовым ящиком %s уже зарегистрирован",
                     userDto.getEmail()));
         }
@@ -61,11 +65,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(long userId) {
+        checkUserInDB(userId);
+        log.info("пользователь {} удален", userRepository.read(userId).getName());
+        userRepository.delete(userId);
+    }
+
+    private void checkUserInDB(long userId) {
         if (userRepository.read(userId) == null) {
             throw new UserNotFoundException(String.format("пользователя с id=%d нет в базе", userId));
         }
-        log.info(String.format("пользователь %s удален", userRepository.read(userId).getName()));
-        userRepository.delete(userId);
     }
 
     @Override

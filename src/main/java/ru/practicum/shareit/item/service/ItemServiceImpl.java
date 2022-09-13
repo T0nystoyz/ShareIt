@@ -24,10 +24,24 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDTO create(long userId, ItemDTO itemDto) {
-        if (userRepository.read(userId) == null) {
-            log.info(String.format("пользователь с id=%d не найден.", userId));
-            throw new UserNotFoundException(String.format("Пользователь с id=%d не найден.", userId));
+        checkUser(userRepository.read(userId) == null,
+                String.format("пользователь с id=%d не найден.", userId),
+                "Пользователь с id=%d не найден.", userId);
+        validateItemDto(itemDto);
+        Item item = ItemMapper.toItem(itemDto);
+        item.setOwner(userRepository.read(userId));
+        log.info("создан предмет {}.", item.getName());
+        return ItemMapper.toDto(itemRepository.create(item));
+    }
+
+    private void checkUser(boolean userRepository, String userId, String format, long userId1) {
+        if (userRepository) {
+            log.info("Проверка существования пользователя с id={}", userId);
+            throw new UserNotFoundException(String.format(format, userId1));
         }
+    }
+
+    private void validateItemDto(ItemDTO itemDto) {
         if (itemDto.getName() == null || itemDto.getName().isBlank()) {
             log.info("попытка создать предмет без имени.");
             throw new ValidationException("предмент не может быть без имени.");
@@ -40,26 +54,21 @@ public class ItemServiceImpl implements ItemService {
             log.info("попытка создать предмет без статуса аренды.");
             throw new ValidationException("предмет не может быть без статуса аренды.");
         }
-        Item item = ItemMapper.toItem(itemDto);
-        item.setOwner(userRepository.read(userId));
-        log.info(String.format("создан предмет %s.", item.getName()));
-        return ItemMapper.toDto(itemRepository.create(item));
     }
 
     @Override
     public ItemDTO read(long itemId) {
-        log.info(String.format("чтение предмета с id=%d.", itemId));
+        log.info("чтение предмета с id={}.", itemId);
         return ItemMapper.toDto(itemRepository.read(itemId));
     }
 
     @Override
     public ItemDTO update(long userId, long itemId, ItemDTO itemDto) {
         Item itemForUpdate = itemRepository.read(itemId);
-        log.info(String.format("попытка обновить предмет с id=%d.", itemId));
-        if (itemForUpdate.getOwner().getId() != userId) {
-            log.info("попытка обновить предмет не владельцем.");
-            throw new UserNotFoundException(String.format("Пользователь с id=%d не владелец предмета.", userId));
-        }
+        log.info("попытка обновить предмет с id={}.", itemId);
+        checkUser(itemForUpdate.getOwner().getId() != userId,
+                "попытка обновить предмет не владельцем.",
+                "Пользователь с id=%d не владелец предмета.", userId);
 
         if (itemDto.getName() != null) {
             itemForUpdate.setName(itemDto.getName());
@@ -70,17 +79,16 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             itemForUpdate.setAvailable(itemDto.getAvailable());
         }
-        log.info(String.format("предмет обновлен с id=%d.", itemId));
+        log.info("предмет обновлен с id={}.", itemId);
         return ItemMapper.toDto(itemRepository.update(itemId, itemForUpdate));
     }
 
     @Override
     public List<ItemDTO> getOwnersItems(long userId) {
-        if (userRepository.read(userId) == null) {
-            log.info(String.format("пользователь с id=%d не найден", userId));
-            throw new UserNotFoundException(String.format("Пользователь с id=%d не найден.", userId));
-        }
-        log.info(String.format("предметы во владении пользователя %s.", userRepository.read(userId).getName()));
+        checkUser(userRepository.read(userId) == null,
+                String.format("пользователь с id=%d не найден", userId),
+                "Пользователь с id=%d не найден.", userId);
+        log.info("предметы во владении пользователя {}.", userRepository.read(userId).getName());
         return itemRepository.getOwnersItems(userId).stream()
                 .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
@@ -91,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-        log.info(String.format("поиск предмета по фрагменту %s.", text));
+        log.info("поиск предмета по фрагменту {}.", text);
         return itemRepository.findItemsByText(text).stream()
                 .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
