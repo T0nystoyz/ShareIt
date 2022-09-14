@@ -10,6 +10,6 @@ import javax.validation.constraints.Email;
 public class UserDTO {
     private long id;
     private String name;
-    @Email(message = "Ошибка в напсиании почтового ящика")
+    @Email(message = "Ошибка в написании почтового ящика")
     private String email;
 }
