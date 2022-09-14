@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * // TODO .
+ * // TODO в следующем спринте.
  */
 @RestController
 @RequestMapping(path = "/requests")
