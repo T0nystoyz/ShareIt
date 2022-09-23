@@ -1,6 +1,10 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.Data;
+import ru.practicum.shareit.booking.model.BookingDTOForItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class ItemDTO {
@@ -9,5 +13,8 @@ public class ItemDTO {
     private String description;
     private Boolean available;
     private Long ownerId;
-    private Long requestId;
+    private BookingDTOForItem lastBooking;
+    private BookingDTOForItem nextBooking;
+    private List<CommentDTO> comments = new ArrayList<>();
+
 }

@@ -8,31 +8,34 @@ import org.hibernate.Hibernate;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Table(name = "items")
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Item {
+@Entity
+@Table(name = "comments")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String name;
-    private String description;
-    private Boolean available;
+    private Long id;
+    private String text;
     @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
+    private Item item;
+    @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    private User author;
+    private LocalDateTime created;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Item item = (Item) o;
-        return id != 0 && Objects.equals(id, item.id);
+        Comment comment = (Comment) o;
+        return id != null && Objects.equals(id, comment.id);
     }
 
     @Override
