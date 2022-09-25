@@ -153,15 +153,15 @@ public class ItemServiceImpl implements ItemService {
 
     private void validateItemDto(ItemDTO itemDto) {
         if (itemDto.getName() == null || itemDto.getName().isBlank()) {
-            throw new ValidationException("предмент не может быть без имени.");
+            throw new ValidationException(String.format("предмент %s не может быть без имени.", itemDto.getName()));
         }
         if (itemDto.getDescription() == null || itemDto.getDescription().isBlank()) {
-            throw new ValidationException("предмет не может быть без описания.");
+            throw new ValidationException(String.format("предмет %s не может быть без описания.", itemDto.getName()));
         }
         if (itemDto.getAvailable() == null) {
-            throw new ValidationException("предмет не может быть без статуса аренды.");
+            throw new ValidationException(String.format("предмет %s не может быть без статуса аренды.", itemDto.getName()));
         }
-        log.info("валидация предмета прошла успешно");
+        log.info("валидация предмета {} прошла успешно", itemDto.getName());
     }
 
     private List<CommentDTO> getComments(long itemId) {
@@ -178,7 +178,7 @@ public class ItemServiceImpl implements ItemService {
 
     private void checkOwnerOfItem(long userId, long itemId) {
         if (itemRepository.getReferenceById(itemId).getOwner().getId() != userId) {
-            throw new UserIsNotOwnerException("пользователь не может редактировать чужой предмет");
+            throw new UserIsNotOwnerException(String.format("пользователь c id=%d не может редактировать чужой предмет", userId));
         }
     }
 }

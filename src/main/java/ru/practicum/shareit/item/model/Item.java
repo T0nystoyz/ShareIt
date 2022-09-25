@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -30,9 +29,9 @@ public class Item {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
-        return id != 0 && Objects.equals(id, item.id);
+        return getId() == item.getId() && getName().equals(item.getName()) && getDescription().equals(item.getDescription()) && getAvailable().equals(item.getAvailable()) && getOwner().equals(item.getOwner());
     }
 
     @Override

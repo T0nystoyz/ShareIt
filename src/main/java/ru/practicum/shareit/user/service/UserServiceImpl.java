@@ -64,9 +64,9 @@ public class UserServiceImpl implements UserService {
 
     private void validateUserDto(UserDTO userDto) {
         if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
-            throw new ValidationException("нельзя создать пользователя без почтового ящика");
+            throw new ValidationException(String.format("нельзя создать пользователя %s без почтового ящика", userDto.getName()));
         }
-        log.info("валидация нового пользователя прошла успешно");
+        log.info("валидация нового пользователя c почтой {} прошла успешно", userDto.getEmail());
     }
 
     private void checkUserInDb(long userId) {
