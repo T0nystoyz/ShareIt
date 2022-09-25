@@ -11,12 +11,12 @@ import java.util.List;
 public interface ItemDAO extends JpaRepository<Item, Long> {
 
     @Query("select i from Item i where i.owner.id = ?1 order by i.id")
-    List<Item> searchItemsByOwner_IdOrderById(long userId);
+    List<Item> searchItemsByOwnerIdOrderById(long userId);
 
     @Query("select i from Item i where i.id = ?1")
     Item findItemById(long itemId);
 
     @Query("select i from Item i where upper(i.description) like upper(concat('%', ?1, '%')) and i.available = true")
-    List<Item> searchItemByDescriptionContainsIgnoreCaseAndAvailableIsTrue(String description);
+    List<Item> searchItemByDescription(String description);
 }
 

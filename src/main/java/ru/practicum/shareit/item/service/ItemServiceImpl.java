@@ -50,7 +50,7 @@ public class ItemServiceImpl implements ItemService {
         if (item.getOwnerId() == userId) {
             return setLastAndNextBookingDate(item);
         }
-        if (commentRepository.existsCommentsByItem_Id(itemId)) {
+        if (commentRepository.existsCommentsByItemId(itemId)) {
             item.setComments(getComments(itemId));
         }
         return item;
@@ -80,7 +80,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDTO> getOwnersItems(long userId) {
         checkUserInDb(userId);
         log.info("предметы во владении пользователя {}.", userRepository.getReferenceById(userId).getName());
-        return itemRepository.searchItemsByOwner_IdOrderById(userId).stream()
+        return itemRepository.searchItemsByOwnerIdOrderById(userId).stream()
                 .map(ItemMapper::toDto)
                 .map(this::setLastAndNextBookingDate)
                 .collect(Collectors.toList());
@@ -92,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
         log.info("поиск предмета по фрагменту {}.", text);
-        return itemRepository.searchItemByDescriptionContainsIgnoreCaseAndAvailableIsTrue(text).stream()
+        return itemRepository.searchItemByDescription(text).stream()
                 .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -114,14 +114,14 @@ public class ItemServiceImpl implements ItemService {
             throw new EmptyCommentException("нельзя создать пустой комментарий");
         }
 
-        if (!bookingRepository.existsByItem_IdAndBooker_IdAndEndBefore(itemId, userId, LocalDateTime.now())) {
+        if (!bookingRepository.existsByItemIdAndBookerIdAndEndBefore(itemId, userId, LocalDateTime.now())) {
             throw new ValidationException("только арендатор может оставлять отзывы");
         }
         log.info("проверка комментария к предмету с id={} и арендатора с id={} прошла успешно", itemId, userId);
     }
 
     public ItemDTO setLastAndNextBookingDate(ItemDTO item) {
-        List<Booking> bookings = bookingRepository.findAllByItem_id(item.getId());
+        List<Booking> bookings = bookingRepository.findAllByItemId(item.getId());
         Booking last = bookings.stream()
                 .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
                 .max((booking, booking1) -> booking1.getStart().compareTo(booking.getStart()))
@@ -138,7 +138,7 @@ public class ItemServiceImpl implements ItemService {
         if (next != null) {
             item.setNextBooking(BookingMapper.toBookingDtoForItem(next));
         }
-        if (commentRepository.existsCommentsByItem_Id(item.getId())) {
+        if (commentRepository.existsCommentsByItemId(item.getId())) {
             item.setComments(getComments(item.getId()));
         }
         return item;
@@ -165,7 +165,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private List<CommentDTO> getComments(long itemId) {
-        return commentRepository.findAllByItem_Id(itemId).stream()
+        return commentRepository.findAllByItemId(itemId).stream()
                 .map(CommentMapper::toCommentDto).collect(Collectors.toList());
     }
 

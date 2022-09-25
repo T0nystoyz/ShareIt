@@ -8,51 +8,46 @@ import ru.practicum.shareit.booking.model.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Transactional
 public interface BookingDAO extends JpaRepository<Booking, Long> {
 
-    Booking save(Booking booking);
     @Query("select b from Booking b where b.id = ?1")
     Booking findBookingById(long bookingId);
 
     @Query("select b from Booking b where b.item.id = ?1")
-    List<Booking> findAllByItem_id(long item_id);
+    List<Booking> findAllByItemId(long item_id);
 
     @Query("select b from Booking b where b.booker.id = ?1")
     List<Booking> getAllByBookerId(long id);
 
-
     @Query("select b from Booking b where b.booker.id = ?1 and b.end < ?2")
-    List<Booking> findByBooker_IdAndEndBefore(long id, LocalDateTime end);
-
+    List<Booking> findByBookerIdAndEndBefore(long id, LocalDateTime end);
 
     @Query("select b from Booking b where b.booker.id = ?1 and b.start > ?2")
-    List<Booking> findByBooker_IdAndStartAfter(long id, LocalDateTime start);
-
+    List<Booking> findByBookerIdAndStartAfter(long id, LocalDateTime start);
 
     @Query("select b from Booking b where b.booker.id = ?1 and b.status = ?2")
-    List<Booking> findByBooker_IdAndStatus(long id, Status status);
+    List<Booking> findByBookerIdAndStatus(long id, Status status);
 
     @Query("select b from Booking b where b.booker.id = ?1 and b.start < ?2 and b.end > ?2")
-    List<Booking> findByBooker_IdAndStartBeforeAndEndAfter(long id, LocalDateTime current);
-
+    List<Booking> findByBookerIdAndStartBeforeAndEndAfter(long id, LocalDateTime current);
 
     @Query("select b from Booking b where b.item.owner.id = ?1")
-    List<Booking> findByItem_Owner_Id(long id);
-
+    List<Booking> findByItemOwnerId(long id);
 
     @Query("select b from Booking b where b.item.owner.id = ?1 and b.end < ?2")
-    List<Booking> findByItem_Owner_IdAndEndBefore(long id, LocalDateTime end);
+    List<Booking> findByItemOwnerIdAndEndBefore(long id, LocalDateTime end);
 
     @Query("select b from Booking b where b.item.owner.id = ?1 and b.start > ?2")
-    List<Booking> findByItem_Owner_IdAndStartAfter(long id, LocalDateTime start);
+    List<Booking> findByItemOwnerIdAndStartAfter(long id, LocalDateTime start);
 
     @Query("select b from Booking b where b.item.owner.id = ?1 and b.start < ?2 and b.end > ?2")
-    List<Booking> findByItem_Owner_IdAndStartBeforeAndEndAfter(long item_owner_id, LocalDateTime start);
+    List<Booking> findByItemOwnerIdAndStartBeforeAndEndAfter(long item_owner_id, LocalDateTime start);
 
     @Query("select b from Booking b where b.item.owner.id = ?1 and b.status = ?2")
-    List<Booking> findByItem_Owner_IdAndStatus(long id, Status status);
+    List<Booking> findByItemOwnerIdAndStatus(long id, Status status);
 
     @Query("select (count(b) > 0) from Booking b where b.item.id = ?1 and b.booker.id = ?2 and b.end < ?3")
-    boolean existsByItem_IdAndBooker_IdAndEndBefore(long itemId, long bookerId, LocalDateTime end);
+    boolean existsByItemIdAndBookerIdAndEndBefore(long itemId, long bookerId, LocalDateTime end);
 }

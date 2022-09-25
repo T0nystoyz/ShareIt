@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -33,13 +32,15 @@ public class Comment {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return id != null && Objects.equals(id, comment.id);
+        return getId().equals(comment.getId()) && getText().equals(comment.getText())
+                && getItem().equals(comment.getItem()) && getAuthor().equals(comment.getAuthor())
+                && getCreated().equals(comment.getCreated());
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(getId(), getText(), getItem(), getAuthor(), getCreated());
     }
 }

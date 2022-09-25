@@ -37,6 +37,6 @@ public class Item {
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(getId(), getName(), getDescription(), getAvailable(), getOwner());
     }
 }
