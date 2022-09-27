@@ -156,7 +156,8 @@ public class BookingServiceImpl implements BookingService {
         if (requestBookingDto.getStart().isAfter(requestBookingDto.getEnd())) {
             throw new ValidationException("начало не может быть позже окончания аренды");
         }
-        log.info("валидация времени аренды прошла успешно: начало {} окончание {}", requestBookingDto.getStart(), requestBookingDto.getEnd());
+        log.info("валидация времени аренды прошла успешно: начало {} окончание {}", requestBookingDto.getStart(),
+                requestBookingDto.getEnd());
     }
 
     private void validateOwnerOrBooker(long userId, long bookingId) {

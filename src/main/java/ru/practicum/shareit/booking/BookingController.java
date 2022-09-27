@@ -41,14 +41,16 @@ public class BookingController {
 
     @GetMapping
     public List<ResponseBookingDTO> getBookingsByUser(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                      @RequestParam(required = false, defaultValue = "ALL") State state) {
+                                                      @RequestParam(required = false, defaultValue = "ALL") State state
+    ) {
         log.info(":::GET userId={} просмотр всей аренды пользователем", userId);
         return bookingService.readBookingByUser(userId, state);
     }
 
     @GetMapping("/owner")
     public List<ResponseBookingDTO> getBookingsByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
-                                                       @RequestParam(required = false, defaultValue = "ALL") State state) {
+                                                       @RequestParam(required = false, defaultValue = "ALL") State state
+    ) {
         log.info(":::GET ownerId={} просмотр всей аренды собственником", ownerId);
         return bookingService.readBookingByOwner(ownerId, state);
     }

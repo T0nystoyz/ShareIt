@@ -31,7 +31,10 @@ public class Item {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
-        return getId() == item.getId() && getName().equals(item.getName()) && getDescription().equals(item.getDescription()) && getAvailable().equals(item.getAvailable()) && getOwner().equals(item.getOwner());
+        return getId() == item.getId() && getName().equals(item.getName())
+                && getDescription().equals(item.getDescription())
+                && getAvailable().equals(item.getAvailable())
+                && getOwner().equals(item.getOwner());
     }
 
     @Override

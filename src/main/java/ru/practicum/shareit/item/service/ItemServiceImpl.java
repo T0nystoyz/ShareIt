@@ -159,7 +159,8 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException(String.format("предмет %s не может быть без описания.", itemDto.getName()));
         }
         if (itemDto.getAvailable() == null) {
-            throw new ValidationException(String.format("предмет %s не может быть без статуса аренды.", itemDto.getName()));
+            throw new ValidationException(String.format("предмет %s не может быть без статуса аренды.",
+                    itemDto.getName()));
         }
         log.info("валидация предмета {} прошла успешно", itemDto.getName());
     }
@@ -178,7 +179,8 @@ public class ItemServiceImpl implements ItemService {
 
     private void checkOwnerOfItem(long userId, long itemId) {
         if (itemRepository.getReferenceById(itemId).getOwner().getId() != userId) {
-            throw new UserIsNotOwnerException(String.format("пользователь c id=%d не может редактировать чужой предмет", userId));
+            throw new UserIsNotOwnerException(String.format("пользователь c id=%d не может редактировать чужой предмет",
+                    userId));
         }
     }
 }
