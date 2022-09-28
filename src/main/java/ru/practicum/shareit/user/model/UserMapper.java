@@ -9,7 +9,6 @@ public class UserMapper {
         userDto.setId(user.getId());
         userDto.setName(user.getName());
         userDto.setEmail(user.getEmail());
-
         return userDto;
     }
 
@@ -18,7 +17,6 @@ public class UserMapper {
         user.setId(userDto.getId());
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
-
         return user;
     }
 }

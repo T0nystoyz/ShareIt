@@ -1,18 +1,22 @@
 package ru.practicum.shareit.item.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
-public interface ItemDAO {
-    Item create(Item item);
+@Transactional
+public interface ItemDAO extends JpaRepository<Item, Long> {
 
-    Item update(long itemId, Item item);
+    @Query("select i from Item i where i.owner.id = ?1 order by i.id")
+    List<Item> searchItemsByOwnerIdOrderById(long userId);
 
-    Item read(long itemId);
+    @Query("select i from Item i where i.id = ?1")
+    Item findItemById(long itemId);
 
-    List<Item> getOwnersItems(long userId);
-
-    List<Item> findItemsByText(String text);
+    @Query("select i from Item i where upper(i.description) like upper(concat('%', ?1, '%')) and i.available = true")
+    List<Item> searchItemByDescription(String description);
 }
 
