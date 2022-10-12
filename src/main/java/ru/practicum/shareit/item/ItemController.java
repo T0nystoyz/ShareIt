@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.model.CommentDTO;
 import ru.practicum.shareit.item.model.ItemDTO;
@@ -9,6 +10,7 @@ import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Slf4j
@@ -41,16 +43,20 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDTO> getOwnersItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDTO> getOwnersItems(@RequestHeader("X-Sharer-User-Id") long userId,
+                                        @Positive @Nullable @RequestParam(defaultValue = "1") int from,
+                                        @Nullable @RequestParam(defaultValue = "10") int size) {
         log.info(":::GET /items/ userId={} чтение предметов собственника", userId);
-        return itemService.getOwnersItems(userId);
+        return itemService.getOwnersItems(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDTO> findItemsByText(@RequestHeader("X-Sharer-User-Id") long userId,
-                                         @RequestParam String text) {
+                                         @RequestParam String text,
+                                         @Positive @Nullable @RequestParam(defaultValue = "1") int from,
+                                         @Nullable @RequestParam(defaultValue = "10") int size) {
         log.info(":::GET /search?text={} поиск по тексту", text);
-        return itemService.findItemsByText(userId, text);
+        return itemService.findItemsByText(userId, text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

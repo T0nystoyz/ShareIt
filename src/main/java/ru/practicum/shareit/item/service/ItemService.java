@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ItemService {
 
-    List<ItemDTO> findItemsByText(long userId, String text);
+    List<ItemDTO> findItemsByText(long userId, String text, int from, int size);
 
     ItemDTO create(long userId, ItemDTO itemDto);
 
@@ -16,7 +16,7 @@ public interface ItemService {
 
     ItemDTO update(long userId, long itemId, ItemDTO itemDto);
 
-    List<ItemDTO> getOwnersItems(long userId);
+    List<ItemDTO> getOwnersItems(long userId, int from, int size);
 
     @Transactional
     CommentDTO createComment(long userId, long itemId, CommentDTO commentDto);

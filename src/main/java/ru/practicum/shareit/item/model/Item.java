@@ -1,9 +1,7 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import ru.practicum.shareit.requests.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -15,9 +13,12 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@AllArgsConstructor
+//@Builder
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(insertable = false, updatable = false)
     private long id;
     private String name;
     private String description;
@@ -25,6 +26,9 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
+    @ManyToOne(/*fetch = FetchType.LAZY*/)
+    //@JoinColumn(name = "id" , insertable = false, updatable = false)
+    private ItemRequest request;
 
     @Override
     public boolean equals(Object o) {

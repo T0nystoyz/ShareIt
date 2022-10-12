@@ -13,7 +13,7 @@ public interface BookingService {
 
     ResponseBookingDTO read(long userId, long bookingId);
 
-    List<ResponseBookingDTO> readBookingByUser(long userId, State state);
+    List<ResponseBookingDTO> readBookingByUser(long userId, State state, int from, int size);
 
-    List<ResponseBookingDTO> readBookingByOwner(long userId, State state);
+    List<ResponseBookingDTO> readBookingByOwner(long userId, State state, int from, int size);
 }
