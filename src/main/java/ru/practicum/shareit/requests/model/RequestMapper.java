@@ -1,9 +1,6 @@
 package ru.practicum.shareit.requests.model;
 
-import ru.practicum.shareit.item.model.ItemDTO;
-
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class RequestMapper {
     public static RequestDTO toRequestDto(ItemRequest itemRequest) {
@@ -23,12 +20,11 @@ public class RequestMapper {
                 .build();
     }
 
-    public static ItemRequestDTO toItemRequestDto(ItemRequest itemRequest, List<ItemDTO> items) {
+    public static ItemRequestDTO toItemRequestDto(ItemRequest itemRequest) {
         return ItemRequestDTO.builder()
                 .id(itemRequest.getId())
                 .description(itemRequest.getDescription())
                 .created(itemRequest.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
-                .items(items)
                 .build();
     }
 }

@@ -69,7 +69,7 @@ class ItemDAOTest {
         userRepository.save(user);
         requestRepository.save(request);
         itemRepository.save(item);
-        List<Item> items = itemRepository.findByRequest(request);
+        List<Item> items = itemRepository.findByRequestId(request.getId());
 
         assertThat(items, equalTo(List.of(item)));
     }

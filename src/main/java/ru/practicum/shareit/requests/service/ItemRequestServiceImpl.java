@@ -3,7 +3,6 @@ package ru.practicum.shareit.requests.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.model.ItemDTO;
@@ -45,16 +44,25 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequestDTO read(long userId, long requestId) {
         checkUserInDb(userId);
         checkRequestInDb(requestId);
-        ItemRequest itemRequest = requestRepository.getReferenceById(requestId);
-        return createItemRequestDto(itemRequest);
+        ItemRequestDTO itemRequestDto = RequestMapper.toItemRequestDto(requestRepository.getReferenceById(requestId));
+        setItems(itemRequestDto);
+        return itemRequestDto;
     }
 
-    @Override
+    /*@Override
     public List<ItemRequestDTO> getUsersRequests(long userId) {
         checkUserInDb(userId);
         return requestRepository
                 .findByRequesterIdOrderByCreatedDesc(userId).stream()
                 .map(this::createItemRequestDto)
+                .collect(Collectors.toList());
+    }*/
+    @Override
+    public List<ItemRequestDTO> getUsersRequests(long userId) {
+        checkUserInDb(userId);
+        return requestRepository.findByRequesterIdOrderByCreatedDesc(userId).stream()
+                .map(RequestMapper::toItemRequestDto)
+                .peek(this::setItems)
                 .collect(Collectors.toList());
     }
 
@@ -62,12 +70,13 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDTO> readAll(long userId, int from, int size) {
         checkUserInDb(userId);
         validate(from);
-        return requestRepository.findByRequesterIdNotOrderByCreatedDesc(
-                        userId, PageRequest.of((from / size), size, Sort.by(Sort.Direction.DESC, "created")))
-                .stream()
-                .map(this::createItemRequestDto)
+        return requestRepository.findByRequesterIdNotOrderByCreatedDesc(userId,
+                        PageRequest.of((from / size), size/* Sort.by(Sort.Direction.DESC, "created")*/)).stream()
+                .map(RequestMapper::toItemRequestDto)
+                .peek(this::setItems)
                 .collect(Collectors.toList());
     }
+
 
     private void checkUserInDb(long userId) {
         if (!userRepository.existsById(userId)) {
@@ -83,13 +92,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         log.info("проверка существования запроса с id={} пройдена", requestId);
     }
 
-    public ItemRequestDTO createItemRequestDto(ItemRequest itemRequest) {
-        List<ItemDTO> items = itemRepository
-                .findByRequest(itemRequest)
-                .stream()
+    private void setItems(ItemRequestDTO itemRequestDto) {
+        List<ItemDTO> items = itemRepository.findByRequestId(itemRequestDto.getId()).stream()
                 .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
-        return RequestMapper.toItemRequestDto(itemRequest, items);
+        itemRequestDto.setItems(items);
     }
 
     private void validate(int from) {

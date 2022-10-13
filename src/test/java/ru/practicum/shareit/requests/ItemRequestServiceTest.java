@@ -29,8 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 class ItemRequestServiceTest {
     private final User user = new User(1, "имя", "имя@mail.ru");
+    private final User user2 = new User(2, "имя2", "имя2@mail.ru");
     private final RequestDTO requestDto = new RequestDTO(1,
             "запрос", user.getId(),
+            LocalDateTime.of(2022, 9, 9, 12, 12, 12));
+    private final RequestDTO requestDto2 = new RequestDTO(2,
+            "запрос", user2.getId(),
             LocalDateTime.of(2022, 9, 9, 12, 12, 12));
 
     @Autowired
@@ -46,6 +50,7 @@ class ItemRequestServiceTest {
         ItemRequestDTO readRequest = requestService.read(1, 1);
         assertThat(readRequest.getDescription(), equalTo(requestDto.getDescription()));
     }
+
     @Test
     @DirtiesContext
     void createWithWrongUser() {
@@ -83,5 +88,19 @@ class ItemRequestServiceTest {
         assertThat(requests.size(), equalTo(List.of(requestDto).size()));
         assertTrue(requests.get(0).getDescription().contains(requestDto.getDescription()));
         assertThat(requests.get(0).getId(), equalTo(requestDto.getId()));
+    }
+
+    @Test
+    @DirtiesContext
+    void readAll() {
+        userRepository.save(user);
+        userRepository.save(user2);
+        requestService.create(1, requestDto);
+        requestService.create(2, requestDto2);
+        List<ItemRequestDTO> requests = requestService.readAll(1, 0, 10);
+        requests.get(0).setCreated(LocalDateTime.now().toString());
+        assertThat(requests.size(), equalTo(List.of(requestDto).size()));
+        assertTrue(requests.get(0).getDescription().contains(requestDto.getDescription()));
+        assertThat(requests.get(0).getId(), equalTo(requestDto2.getId()));
     }
 }

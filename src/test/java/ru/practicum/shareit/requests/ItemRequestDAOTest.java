@@ -16,17 +16,18 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+
 @DataJpaTest
 class ItemRequestDAOTest {
+    private final User user = new User(1, "имя", "имя@mail.ru");
+    private final ItemRequest request = new ItemRequest(1, "запрос", user,
+            LocalDateTime.of(2022, 9, 9, 12, 12, 12));
     @Autowired
     private ItemRequestDAO requestRepository;
     @Autowired
     private UserDAO userRepository;
-    private final User user = new User(1, "имя", "имя@mail.ru");
-    private final ItemRequest request = new ItemRequest(1, "запрос", user,
-            LocalDateTime.of(2022, 9, 9, 12, 12, 12));
 
-@DirtiesContext
+    @DirtiesContext
     @Test
     void findByRequesterIdOrderByCreatedDesc() {
         userRepository.save(user);
@@ -34,12 +35,14 @@ class ItemRequestDAOTest {
         List<ItemRequest> requests = requestRepository.findByRequesterIdOrderByCreatedDesc(user.getId());
         assertThat(requests, equalTo(List.of(request)));
     }
+
     @DirtiesContext
     @Test
     void findByRequesterIdNotOrderByCreatedDesc() {
-        userRepository.saveAndFlush(user);
-        requestRepository.saveAndFlush(request);
-        List<ItemRequest> requests = requestRepository.findByRequesterIdNotOrderByCreatedDesc(user.getId(), PageRequest.of(0, 10));
+        userRepository.save(user);
+        requestRepository.save(request);
+        List<ItemRequest> requests = requestRepository.findByRequesterIdNotOrderByCreatedDesc(user.getId(),
+                PageRequest.of(0, 10));
         assertThat(requests, equalTo(Collections.emptyList()));
     }
 }
