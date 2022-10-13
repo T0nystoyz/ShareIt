@@ -24,8 +24,10 @@ public class ItemRequest {
     private String description;
 
     @ManyToOne
+    @JoinColumn(name = "requester_id")
     private User requester;
 
+    @Transient
     private LocalDateTime created;
 
     @Override
