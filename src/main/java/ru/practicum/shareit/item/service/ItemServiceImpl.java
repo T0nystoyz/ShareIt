@@ -55,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
         log.info("чтение предмета с id={} пользователем с id={}", itemId, userId);
         ItemDTO item = ItemMapper.toDto(itemRepository.findItemById(itemId));
         if (item.getOwnerId() == userId) {
-            return setLastAndNextBookingDate(item);
+            setLastAndNextBookingDate(item);
         }
         if (commentRepository.existsCommentsByItemId(itemId)) {
             item.setComments(getComments(itemId));
@@ -152,7 +152,7 @@ public class ItemServiceImpl implements ItemService {
         if (commentRepository.existsCommentsByItemId(item.getId())) {
             item.setComments(getComments(item.getId()));
         } else {
-            item.setComments(new ArrayList<>());
+            item.setComments(null);
         }
         return item;
     }

@@ -14,7 +14,7 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
-//@Builder
+@Builder
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +26,7 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
-    @ManyToOne(/*fetch = FetchType.LAZY*/)
-    //@JoinColumn(name = "id" , insertable = false, updatable = false)
+    @ManyToOne
     private ItemRequest request;
 
     @Override

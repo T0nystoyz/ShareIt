@@ -1,142 +1,148 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoSession;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.repository.BookingDAO;
 import ru.practicum.shareit.item.model.*;
 import ru.practicum.shareit.item.repository.CommentDAO;
-import ru.practicum.shareit.item.repository.ItemDAO;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.requests.model.ItemRequest;
 import ru.practicum.shareit.requests.repository.ItemRequestDAO;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserDAO;
 import ru.practicum.shareit.utils.exceptions.ValidationException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@ExtendWith(MockitoExtension.class)
 class ItemServiceTest {
-    @MockBean
-    private final UserDAO userRepository;
-    @MockBean
-    private final BookingDAO bookingRepository;
-    @MockBean
-    private final ItemDAO itemRepository;
-    @MockBean
-    private final CommentDAO commentRepository;
-    @MockBean
-    private final ItemRequestDAO requestRepository;
-
     private final User user = new User(1, "имя", "имя@mail.ru");
-    private final Item item = new Item(1, "отвертка", "обычная", true, user, null);
-    private final Comment comment = new Comment(1L, "отвертка всем отверткам", item, user, LocalDateTime.now());
-    private final ItemDTO itemDto = new ItemDTO(1L, "отвертка", "обычная", true, 1L,
-            null, null, null, null);
+    private final ItemDTO itemDto = new ItemDTO("отвертка", "обычная", true, 1L);
+    private final ItemRequest itemRequest = new ItemRequest(1, "", user,
+            LocalDateTime.now());
+    private final Item item = new Item(1, "", "", true, user, itemRequest);
+
+    private final Comment comment = new Comment(1L, "комментарий", item, user,
+            LocalDateTime.of(2022, 12,12,12,12,12));
+    @Autowired
+    private UserDAO userRepository;
     @Autowired
     private ItemServiceImpl itemService;
-    private MockitoSession session;
+    @Autowired
+    private CommentDAO commentRepository;
+    @Autowired
+    private ItemRequestDAO requestRepository;
+    @MockBean
+    private BookingDAO bookingRepository;
 
-    @BeforeEach
-    void setUp() {
-        session = mockitoSession().initMocks(this).startMocking();
-        itemService = new ItemServiceImpl(itemRepository, userRepository, bookingRepository, commentRepository,
-                requestRepository);
-    }
-
-    @AfterEach
-    void tearDown() {
-        session.finishMocking();
+    @Test
+    @DirtiesContext
+    void create() {
+        userRepository.save(user);
+        ItemDTO created = itemService.create(1L, itemDto);
+        ItemDTO readItem = itemService.read(1, 1);
+        created.setComments(new ArrayList<>());
+        assertThat(readItem, equalTo(created));
     }
 
     @Test
+    @DirtiesContext
+    void createWithComments() {
+        long userid = userRepository.save(user).getId();
+        itemDto.setComments(List.of(CommentMapper.toCommentDto(comment)));
+        itemDto.setId(itemService.create(userid, itemDto).getId());
+        itemDto.setRequestId(0L);
+        commentRepository.save(comment);
+        ItemDTO readItem = itemService.read(1, 1);
+        assertThat(readItem, equalTo(itemDto));
+    }
+
+    @Test
+    @DirtiesContext
+    void createWithRequest() {
+        userRepository.save(user);
+        requestRepository.save(itemRequest);
+        itemDto.setRequestId(1L);
+        ItemDTO created = itemService.create(1L, itemDto);
+        ItemDTO readItem = itemService.read(1, 1);
+        created.setComments(new ArrayList<>());
+        assertThat(readItem, equalTo(created));
+    }
+
+    @Test
+    @DirtiesContext
     void findItemsByText() {
-        when(itemRepository.searchItemByDescription(anyString(), any(PageRequest.class)))
-                .thenReturn(List.of(item));
-        List<ItemDTO> items = itemService.findItemsByText(user.getId(), "обы", 1, 10);
-
-        assertThat(items, equalTo(List.of(ItemMapper.toDto(item))));
+        userRepository.save(user);
+        ItemDTO created = itemService.create(1L, itemDto);
+        List<ItemDTO> items = itemService.findItemsByText(1, "обы", 1, 10);
+        assertThat(items, equalTo(List.of(created)));
+    }
+    @Test
+    @DirtiesContext
+    void findItemsByEmptyText() {
+        userRepository.save(user);
+        itemService.create(1L, itemDto);
+        List<ItemDTO> items = itemService.findItemsByText(1, "", 1, 10);
+        assertThat(items, equalTo(Collections.emptyList()));
     }
 
     @Test
+    @DirtiesContext
     void findItemsByTextWithWrongParameterFrom() {
         assertThrows(ValidationException.class, ()
                 -> itemService.findItemsByText(1, "обыч", -1, 10));
     }
 
     @Test
-    void create() {
-        when(itemRepository.save(any(Item.class)))
-                .thenReturn(item);
-        assertThat(itemDto.getId(), equalTo(itemRepository.save(item).getId()));
-        assertThat(itemDto.getName(), equalTo(itemRepository.save(item).getName()));
-        assertThat(itemDto.getDescription(), equalTo(itemRepository.save(item).getDescription()));
-        assertThat(itemDto.getAvailable(), equalTo(itemRepository.save(item).getAvailable()));
+    @DirtiesContext
+    void createComment(){
+        when(bookingRepository.existsByItemIdAndBookerIdAndEndBefore(anyLong(), anyLong(),
+                any(LocalDateTime.class))).thenReturn(true);
+        userRepository.save(user);
+        itemDto.setComments(List.of(CommentMapper.toCommentDto(comment)));
+        itemDto.setId(itemService.create(1L, itemDto).getId());
+        itemDto.setRequestId(0L);
+        itemService.createComment(1, 1, CommentMapper.toCommentDto(comment));
+        List<CommentDTO> readComment = itemService.read(1, 1).getComments();
+        assertTrue(readComment.get(0).getText().startsWith("комментарий"));
     }
-
     @Test
-    void read() {
-        when(userRepository.existsById(anyLong())).thenReturn(true);  //проверки на сущетсвование
-        when(itemRepository.existsById(anyLong())).thenReturn(true);    //в приватных методах сервиса
-        when(itemRepository.findItemById(anyLong())).thenReturn(item);
-        ItemDTO itemDto = itemService.read(item.getId(), user.getId());
-
-        assertThat(itemDto.getId(), equalTo(item.getId()));
-        assertThat(itemDto.getName(), equalTo(item.getName()));
-        assertThat(itemDto.getDescription(), equalTo(item.getDescription()));
-        assertThat(itemDto.getAvailable(), equalTo(item.getAvailable()));
-    }
-
-    @Test
+    @DirtiesContext
     void update() {
-        when(itemRepository.save(any())).thenReturn(item);
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(itemRepository.getReferenceById(anyLong())).thenReturn(item);
-        ItemDTO itemDto = itemService.create(user.getId(), ItemMapper.toDto(item));
-
-        assertThat(itemDto.getId(), equalTo(item.getId()));
-        assertThat(itemDto.getName(), equalTo(item.getName()));
-        assertThat(itemDto.getDescription(), equalTo(item.getDescription()));
-        assertThat(itemDto.getAvailable(), equalTo(item.getAvailable()));
+        userRepository.save(user);
+        itemService.create(1L, itemDto);
+        itemDto.setDescription("необычная");
+        ItemDTO readUpdatedItem = itemService.update(1, 1, itemDto);
+        assertThat(readUpdatedItem.getDescription(), equalTo("необычная"));
     }
 
     @Test
+    @DirtiesContext
     void getOwnersItems() {
-        when(itemRepository.searchItemsByOwnerIdOrderById(anyLong(), any())).thenReturn(List.of(item));
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(userRepository.getReferenceById(anyLong())).thenReturn(user);
-        List<ItemDTO> items = itemService.getOwnersItems(user.getId(), 0, 10);
-
-        assertThat(items, equalTo(List.of(ItemMapper.toDto(item))));
-    }
-
-    @Test
-    void createComment() {
-        when(bookingRepository.existsByItemIdAndBookerIdAndEndBefore(anyLong(), anyLong(), any())).thenReturn(true);
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(commentRepository.save(any())).thenReturn(comment);
-
-        CommentDTO commentDto = itemService.createComment(user.getId(), item.getId(),
-                CommentMapper.toCommentDto(comment));
-
-        assertThat(commentDto.getId(), equalTo(comment.getId()));
-        assertThat(commentDto.getText(), equalTo(comment.getText()));
-        assertThat(commentDto.getAuthorName(), equalTo(comment.getAuthor().getName()));
-        assertThat(commentDto.getCreated(), equalTo(comment.getCreated()));
+        userRepository.save(user);
+        ItemDTO created = itemService.create(1L, itemDto);
+        List<ItemDTO> ownersItems = itemService.getOwnersItems(1, 0, 10);
+        assertThat(ownersItems, equalTo(List.of(created)));
     }
 }

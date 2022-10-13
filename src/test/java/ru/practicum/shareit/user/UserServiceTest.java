@@ -1,101 +1,92 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoSession;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDTO;
 import ru.practicum.shareit.user.model.UserMapper;
 import ru.practicum.shareit.user.repository.UserDAO;
 import ru.practicum.shareit.user.service.UserServiceImpl;
+import ru.practicum.shareit.utils.exceptions.UserNotFoundException;
+import ru.practicum.shareit.utils.exceptions.ValidationException;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
-    @MockBean
-    private final UserDAO userRepository;
     private final User user = new User(1, "имя", "имя@mail.ru");
-    private MockitoSession session;
+    private final UserDTO userDto = new UserDTO(1,"имя", "имя@mail.ru");
+
     @Autowired
-    private UserServiceImpl service;
-
-    @BeforeEach
-    void setUp() {
-        session = mockitoSession().initMocks(this).startMocking();
-        service = new UserServiceImpl(userRepository);
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-    }
-
-    @AfterEach
-    void tearDown() {
-        session.finishMocking();
-    }
+    private UserDAO userRepository;
+    @Autowired
+    private UserServiceImpl userService;
 
     @Test
+    @DirtiesContext
     void create() {
-        when(userRepository.save(any())).thenReturn(user);
-
-        User userResponse = service.create(UserMapper.toDto(user));
-
-        assertThat(userResponse.getId(), equalTo(user.getId()));
-        assertThat(userResponse.getName(), equalTo(user.getName()));
-        assertThat(userResponse.getEmail(), equalTo(user.getEmail()));
-        verify(userRepository, times(1)).save(user);
+        userRepository.save(user);
+        User created = userService.create(userDto);
+        UserDTO readUser = userService.read(1);
+        assertThat(readUser, equalTo(UserMapper.toDto(created)));
+    }
+    @Test
+    @DirtiesContext
+    void createWithFailedValidation() {
+        userDto.setEmail(null);
+        assertThrows(ValidationException.class, () -> userService.create(userDto));
     }
 
     @Test
+    @DirtiesContext
     void read() {
-        when(userRepository.findById(anyLong())).thenReturn(user);
-
-        UserDTO userDto = UserMapper.toDto(userRepository.findById(user.getId()));
-
-        assertThat(userDto.getId(), equalTo(user.getId()));
-        assertThat(userDto.getName(), equalTo(user.getName()));
-        assertThat(userDto.getEmail(), equalTo(user.getEmail()));
-        verify(userRepository, times(1)).findById(user.getId());
+        userRepository.save(user);
+        User created = userService.create(userDto);
+        UserDTO readUser = userService.read(1);
+        assertThat(readUser, equalTo(UserMapper.toDto(created)));
     }
 
     @Test
+    @DirtiesContext
+    void readByWrongId() {
+        assertThrows(UserNotFoundException.class, () -> userService.read(1));
+    }
+
+    @Test
+    @DirtiesContext
     void update() {
-        when(userRepository.save(any())).thenReturn(user);
-        when(userRepository.findById(anyLong())).thenReturn(user);
-
-        User userResponse = service.create(UserMapper.toDto(user));
-
-        assertThat(userResponse.getId(), equalTo(user.getId()));
-        assertThat(userResponse.getName(), equalTo(user.getName()));
-        assertThat(userResponse.getEmail(), equalTo(user.getEmail()));
-        verify(userRepository, times(1)).save(user);
+        userRepository.save(user);
+        userDto.setName("новое имя");
+        userService.update(1, userDto);
+        assertThat(userService.read(1).getName(), equalTo("новое имя"));
     }
 
     @Test
+    @DirtiesContext
     void delete() {
-        service.delete(user.getId());
-
-        verify(userRepository, times(1)).deleteUserById(anyLong());
+        userRepository.save(user);
+        userService.delete(1);
+        assertThrows(UserNotFoundException.class, () -> userService.read(1));
     }
 
     @Test
+    @DirtiesContext
     void readAll() {
-        when(userRepository.findAll()).thenReturn(List.of(user));
-
-        List<UserDTO> users = service.readAll();
-
-        assertThat(users, equalTo(List.of(UserMapper.toDto(user))));
-        verify(userRepository, times(1)).findAll();
+        userRepository.save(user);
+        userService.readAll();
+        assertThat(userService.readAll(), equalTo(List.of(userDto)));
     }
 }

@@ -23,4 +23,10 @@ public class ItemDTO {
     private List<CommentDTO> comments;
     private Long requestId;
 
+    public ItemDTO(String name, String description, Boolean available, Long ownerId) {
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.ownerId = ownerId;
+    }
 }
