@@ -37,8 +37,8 @@ class ItemRequestDAOTest {
     @DirtiesContext
     @Test
     void findByRequesterIdNotOrderByCreatedDesc() {
-        userRepository.save(user);
-        requestRepository.save(request);
+        userRepository.saveAndFlush(user);
+        requestRepository.saveAndFlush(request);
         List<ItemRequest> requests = requestRepository.findByRequesterIdNotOrderByCreatedDesc(user.getId(), PageRequest.of(0, 10));
         assertThat(requests, equalTo(Collections.emptyList()));
     }
