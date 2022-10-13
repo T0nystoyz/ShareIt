@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserDAO;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,6 +20,9 @@ import static org.hamcrest.Matchers.equalTo;
 class ItemRequestDAOTest {
     private final User user = new User(1, "имя", "имя@mail.ru");
     private final ItemRequest request = new ItemRequest(1, "запрос", user,
+            LocalDateTime.of(2022, 9, 9, 12, 12, 12));
+    private final User user2 = new User(2, "имя2", "имя2@mail.ru");
+    private final ItemRequest request2 = new ItemRequest(2, "запрос", user2,
             LocalDateTime.of(2022, 9, 9, 12, 12, 12));
     @Autowired
     private ItemRequestDAO requestRepository;
@@ -40,9 +42,11 @@ class ItemRequestDAOTest {
     @Test
     void findByRequesterIdNotOrderByCreatedDesc() {
         userRepository.save(user);
+        userRepository.save(user2);
         requestRepository.save(request);
-        List<ItemRequest> requests = requestRepository.findByRequesterIdNotOrderByCreatedDesc(user.getId(),
+        requestRepository.save(request2);
+        List<ItemRequest> requests = requestRepository.findByRequesterIdNotOrderByCreatedDesc(user2.getId(),
                 PageRequest.of(0, 10));
-        assertThat(requests, equalTo(Collections.emptyList()));
+        assertThat(requests, equalTo(List.of(request)));
     }
 }
