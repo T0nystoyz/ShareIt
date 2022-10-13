@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentDAO;
@@ -34,23 +34,25 @@ class CommentDAOTest {
     private final ItemRequest request = new ItemRequest(1, "запрос", user, LocalDateTime.of(2022, 9, 9, 12, 12, 12));
     private final Item item = new Item(1, "отвертка", "обычная", true, user, request);
     private final Comment comment = new Comment(1L, "комментарий", item, user, LocalDateTime.now());
-    @BeforeEach
-    void setUp() {
+
+    @DirtiesContext
+    @Test
+    void findAllByItemId() {
         userRepository.save(user);
         requestRepository.save(request);
         itemRepository.save(item);
         commentRepository.save(comment);
-    }
-
-    @Test
-    void findAllByItemId() {
         List<Comment> comments = commentRepository.findAllByItemId(item.getId());
 
         assertThat(comments, equalTo(List.of(comment)));
     }
-
+@DirtiesContext
     @Test
     void existsCommentsByItemId() {
+        userRepository.save(user);
+        requestRepository.save(request);
+        itemRepository.save(item);
+        commentRepository.save(comment);
         assertDoesNotThrow(() -> commentRepository.existsCommentsByItemId(item.getId()));
     }
 }

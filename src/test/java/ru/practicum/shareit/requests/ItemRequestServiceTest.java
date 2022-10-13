@@ -84,16 +84,4 @@ class ItemRequestServiceTest {
         assertTrue(requests.get(0).getDescription().contains(requestDto.getDescription()));
         assertThat(requests.get(0).getId(), equalTo(requestDto.getId()));
     }
-
-    /*@Test
-    @DirtiesContext
-    void readAll() {
-        userRepository.save(user);
-        requestService.create(1, requestDto);
-        List<ItemRequestDTO> requests = requestService.readAll(1, 0, 10);
-        //requests.get(0).setCreated(LocalDateTime.now().toString());
-        assertThat(requests.size(), equalTo(List.of(requestDto).size()));
-        assertTrue(requests.get(0).getDescription().contains(requestDto.getDescription()));
-        assertThat(requests.get(0).getId(), equalTo(requestDto.getId()));
-    }*/
 }

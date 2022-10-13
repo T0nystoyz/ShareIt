@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestDTO {
-        private long id;
-        @NotEmpty
-        private String description;
-        private long requesterId;
-        private LocalDateTime created;
-    }
+    private long id;
+    @NotEmpty
+    private String description;
+    private long requesterId;
+    private LocalDateTime created;
+}

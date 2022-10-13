@@ -12,6 +12,7 @@ import java.util.List;
 public interface ItemRequestDAO extends JpaRepository<ItemRequest, Long> {
     @Query("select i from ItemRequest i where i.requester.id = ?1 order by i.created DESC")
     List<ItemRequest> findByRequesterIdOrderByCreatedDesc(long id);
+
     @Query("select i from ItemRequest i where i.requester.id <> ?1 order by i.created DESC")
     List<ItemRequest> findByRequesterIdNotOrderByCreatedDesc(long id, Pageable pageable);
 }

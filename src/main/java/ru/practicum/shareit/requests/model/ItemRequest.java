@@ -20,7 +20,7 @@ public class ItemRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(insertable = false, updatable = false)
     private long id;
-@NotNull
+    @NotNull
     private String description;
 
     @ManyToOne

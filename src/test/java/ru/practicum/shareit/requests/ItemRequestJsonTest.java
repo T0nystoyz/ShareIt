@@ -28,5 +28,4 @@ class ItemRequestJsonTest {
         assertThat(res).extractingJsonPathStringValue("$.created").isEqualTo(itemRequestDto.getCreated());
         assertThat(res).extractingJsonPathArrayValue("$.items").isEqualTo(itemRequestDto.getItems());
     }
-
 }

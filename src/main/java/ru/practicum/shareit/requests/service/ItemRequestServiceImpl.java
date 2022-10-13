@@ -68,12 +68,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .map(this::createItemRequestDto)
                 .collect(Collectors.toList());
     }
-    /*List<ItemRequest> requests = requestRepository
-                    .findByRequesterIdOrderByCreatedDesc(userId);
-            List<ItemRequestDTO> list = new ArrayList<>();
-            for (ItemRequest itemRequest : requests) {
-                list.add(createItemRequestDto(itemRequest));
-            }*/
+
     private void checkUserInDb(long userId) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(String.format("пользователь с id=%d не найден.", userId));

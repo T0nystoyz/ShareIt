@@ -54,7 +54,8 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<ResponseBookingDTO> getBookingsByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
-                                                       @RequestParam(required = false, defaultValue = "ALL") State state,
+                                                       @RequestParam(required = false,
+                                                               defaultValue = "ALL") State state,
                                                        @Positive @Nullable @RequestParam(defaultValue = "1") int from,
                                                        @Nullable @RequestParam(defaultValue = "10") int size
     ) {

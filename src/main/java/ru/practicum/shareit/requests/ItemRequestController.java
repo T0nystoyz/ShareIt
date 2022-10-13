@@ -30,7 +30,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     ItemRequestDTO read(@NotBlank @RequestHeader("X-Sharer-User-Id") long userId,
-                           @PathVariable long requestId) {
+                        @PathVariable long requestId) {
         log.info(":::GET /requests/{} чтение запроса по айди", requestId);
         return itemRequestService.read(userId, requestId);
     }
