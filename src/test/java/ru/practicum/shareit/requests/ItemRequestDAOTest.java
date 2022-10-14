@@ -29,7 +29,7 @@ class ItemRequestDAOTest {
     @Autowired
     private UserDAO userRepository;
 
-    //DirtiesContext
+    @DirtiesContext
     @Test
     void findByRequesterIdOrderByCreatedDesc() {
         userRepository.save(user);
