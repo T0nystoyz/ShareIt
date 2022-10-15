@@ -49,14 +49,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestDto;
     }
 
-    /*@Override
-    public List<ItemRequestDTO> getUsersRequests(long userId) {
-        checkUserInDb(userId);
-        return requestRepository
-                .findByRequesterIdOrderByCreatedDesc(userId).stream()
-                .map(this::createItemRequestDto)
-                .collect(Collectors.toList());
-    }*/
     @Override
     public List<ItemRequestDTO> getUsersRequests(long userId) {
         checkUserInDb(userId);
