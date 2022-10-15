@@ -38,11 +38,11 @@ class ItemRequestDAOTest {
     @DirtiesContext
     @Test
     void findByRequesterIdNotOrderByCreatedDesc() {
-        final User user3 = new User(3, "имя3", "имя3@mail.ru");
-        final ItemRequest request3 = new ItemRequest(1, "запрос", user3,
+        final User user3 = new User("имя3", "имя3@mail.ru");
+        final ItemRequest request3 = new ItemRequest("запрос", user3,
                 LocalDateTime.of(2022, 9, 9, 12, 12, 12));
-        final User user4 = new User(4, "имя4", "имя4@mail.ru");
-        final ItemRequest request4 = new ItemRequest(2, "запрос", user4,
+        final User user4 = new User("имя4", "имя4@mail.ru");
+        final ItemRequest request4 = new ItemRequest("запрос", user4,
                 LocalDateTime.of(2022, 9, 9, 12, 12, 12));
         userRepository.save(user3);
         userRepository.save(user4);

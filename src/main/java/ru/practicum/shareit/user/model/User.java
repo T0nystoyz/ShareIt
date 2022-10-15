@@ -21,6 +21,11 @@ public class User {
     @Email(message = "Ошибка в написании почтового ящика")
     private String email;
 
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
 
     @Override
     public boolean equals(Object o) {

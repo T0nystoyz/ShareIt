@@ -39,7 +39,7 @@ public class BookingControllerTest {
             23L, 1L, WAITING);
 
     @MockBean
-    BookingService service;
+    private BookingService service;
     @Autowired
     private ObjectMapper mapper;
     @Autowired
