@@ -21,9 +21,6 @@ class ItemRequestDAOTest {
     private final User user = new User(1, "имя", "имя@mail.ru");
     private final ItemRequest request = new ItemRequest(1, "запрос", user,
             LocalDateTime.of(2022, 9, 9, 12, 12, 12));
-    private final User user2 = new User(2, "имя2", "имя2@mail.ru");
-    private final ItemRequest request2 = new ItemRequest(2, "запрос", user2,
-            LocalDateTime.of(2022, 9, 9, 12, 12, 12));
     @Autowired
     private ItemRequestDAO requestRepository;
     @Autowired
@@ -41,12 +38,18 @@ class ItemRequestDAOTest {
     @DirtiesContext
     @Test
     void findByRequesterIdNotOrderByCreatedDesc() {
-        userRepository.save(user);
-        userRepository.save(user2);
-        requestRepository.save(request);
-        requestRepository.save(request2);
-        List<ItemRequest> requests = requestRepository.findByRequesterIdNotOrderByCreatedDesc(user2.getId(),
+        final User user3 = new User(3, "имя3", "имя3@mail.ru");
+        final ItemRequest request3 = new ItemRequest(1, "запрос", user3,
+                LocalDateTime.of(2022, 9, 9, 12, 12, 12));
+        final User user4 = new User(4, "имя4", "имя4@mail.ru");
+        final ItemRequest request4 = new ItemRequest(2, "запрос", user4,
+                LocalDateTime.of(2022, 9, 9, 12, 12, 12));
+        userRepository.save(user3);
+        userRepository.save(user4);
+        requestRepository.save(request3);
+        requestRepository.save(request4);
+        List<ItemRequest> requests = requestRepository.findByRequesterIdNotOrderByCreatedDesc(user3.getId(),
                 PageRequest.of(0, 10));
-        assertThat(requests, equalTo(List.of(request)));
+        assertThat(requests, equalTo(List.of(request4)));
     }
 }
