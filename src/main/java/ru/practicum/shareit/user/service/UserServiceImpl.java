@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(long userId) {
         checkUserInDb(userId);
-        log.info("пользователь {} удален", userRepository.getReferenceById(userId).getName());
+        log.info("пользователь c id={} удален", userId);
         userRepository.deleteUserById(userId);
     }
 

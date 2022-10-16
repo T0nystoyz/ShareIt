@@ -1,11 +1,9 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.Objects;
 
 @Entity
@@ -14,12 +12,19 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+    @Email(message = "Ошибка в написании почтового ящика")
     private String email;
+
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 
 
     @Override
