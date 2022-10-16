@@ -42,6 +42,7 @@ class BookingDAOTest {
         Booking booking1 = bookingRepository.findBookingById(booking.getId());
         assertThat(booking1, equalTo(booking));
     }
+
     @DirtiesContext
     @Test
     void findAllByItemId() {
@@ -51,6 +52,7 @@ class BookingDAOTest {
         List<Booking> bookings = bookingRepository.findAllByItemId(item.getId());
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void getAllByBookerId() {
@@ -60,6 +62,7 @@ class BookingDAOTest {
         List<Booking> bookings = bookingRepository.getAllByBookerId(user.getId(), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void findByBookerIdAndEndBefore() {
@@ -70,6 +73,7 @@ class BookingDAOTest {
                 LocalDateTime.now().plusDays(10), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void findByBookerIdAndStartAfter() {
@@ -80,6 +84,7 @@ class BookingDAOTest {
                 LocalDateTime.now().plusDays(4), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void findByBookerIdAndStatus() {
@@ -89,6 +94,7 @@ class BookingDAOTest {
         List<Booking> bookings = bookingRepository.findByBookerIdAndStatus(user.getId(), Status.WAITING, PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void findByBookerIdAndStartBeforeAndEndAfter() {
@@ -99,6 +105,7 @@ class BookingDAOTest {
                 LocalDateTime.now().plusDays(6), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void findByItemOwnerId() {
@@ -108,24 +115,27 @@ class BookingDAOTest {
         List<Booking> bookings = bookingRepository.findByItemOwnerId(user.getId(), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void findByItemOwnerIdAndEndBefore() {
         userRepository.save(user);
         itemRepository.save(item);
         bookingRepository.save(booking);
-        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndEndBefore(user.getId(),LocalDateTime.now().plusDays(10), PageRequest.of(0, 10));
+        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndEndBefore(user.getId(), LocalDateTime.now().plusDays(10), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void findByItemOwnerIdAndStartAfter() {
         userRepository.save(user);
         itemRepository.save(item);
         bookingRepository.save(booking);
-        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndStartAfter(user.getId(),LocalDateTime.now().plusDays(4), PageRequest.of(0, 10));
+        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndStartAfter(user.getId(), LocalDateTime.now().plusDays(4), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void findByItemOwnerIdAndStartBeforeAndEndAfter() {
@@ -136,6 +146,7 @@ class BookingDAOTest {
                 LocalDateTime.now().plusDays(6), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void findByItemOwnerIdAndStatus() {
@@ -145,6 +156,7 @@ class BookingDAOTest {
         List<Booking> bookings = bookingRepository.findByItemOwnerIdAndStatus(user.getId(), Status.WAITING, PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
+
     @DirtiesContext
     @Test
     void existsByItemIdAndBookerIdAndEndBefore() {

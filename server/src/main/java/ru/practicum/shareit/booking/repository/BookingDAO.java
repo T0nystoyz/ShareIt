@@ -17,7 +17,7 @@ public interface BookingDAO extends JpaRepository<Booking, Long> {
     Booking findBookingById(long bookingId);
 
     @Query("select b from Booking b where b.item.id = ?1")
-    List<Booking> findAllByItemId(long item_id);
+    List<Booking> findAllByItemId(long itemId);
 
     @Query("select b from Booking b where b.booker.id = ?1")
     List<Booking> getAllByBookerId(long id, Pageable pageable);
@@ -44,7 +44,7 @@ public interface BookingDAO extends JpaRepository<Booking, Long> {
     List<Booking> findByItemOwnerIdAndStartAfter(long id, LocalDateTime start, Pageable pageable);
 
     @Query("select b from Booking b where b.item.owner.id = ?1 and b.start < ?2 and b.end > ?2")
-    List<Booking> findByItemOwnerIdAndStartBeforeAndEndAfter(long item_owner_id, LocalDateTime start,
+    List<Booking> findByItemOwnerIdAndStartBeforeAndEndAfter(long itemOwnerId, LocalDateTime start,
                                                              Pageable pageable);
 
     @Query("select b from Booking b where b.item.owner.id = ?1 and b.status = ?2")
