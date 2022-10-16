@@ -91,7 +91,8 @@ class BookingDAOTest {
         userRepository.save(user);
         itemRepository.save(item);
         bookingRepository.save(booking);
-        List<Booking> bookings = bookingRepository.findByBookerIdAndStatus(user.getId(), Status.WAITING, PageRequest.of(0, 10));
+        List<Booking> bookings = bookingRepository.findByBookerIdAndStatus(user.getId(), Status.WAITING,
+                PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
 
@@ -122,7 +123,8 @@ class BookingDAOTest {
         userRepository.save(user);
         itemRepository.save(item);
         bookingRepository.save(booking);
-        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndEndBefore(user.getId(), LocalDateTime.now().plusDays(10), PageRequest.of(0, 10));
+        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndEndBefore(user.getId(),
+                LocalDateTime.now().plusDays(10), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
 
@@ -132,7 +134,8 @@ class BookingDAOTest {
         userRepository.save(user);
         itemRepository.save(item);
         bookingRepository.save(booking);
-        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndStartAfter(user.getId(), LocalDateTime.now().plusDays(4), PageRequest.of(0, 10));
+        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndStartAfter(user.getId(),
+                LocalDateTime.now().plusDays(4), PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
 
@@ -153,7 +156,8 @@ class BookingDAOTest {
         userRepository.save(user);
         itemRepository.save(item);
         bookingRepository.save(booking);
-        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndStatus(user.getId(), Status.WAITING, PageRequest.of(0, 10));
+        List<Booking> bookings = bookingRepository.findByItemOwnerIdAndStatus(user.getId(), Status.WAITING,
+                PageRequest.of(0, 10));
         assertThat(bookings, equalTo(List.of(booking)));
     }
 
@@ -163,6 +167,7 @@ class BookingDAOTest {
         userRepository.save(user);
         itemRepository.save(item);
         bookingRepository.save(booking);
-        assertDoesNotThrow(() -> bookingRepository.existsByItemIdAndBookerIdAndEndBefore(item.getId(), user.getId(), LocalDateTime.now().plusDays(10)));
+        assertDoesNotThrow(() -> bookingRepository.existsByItemIdAndBookerIdAndEndBefore(item.getId(), user.getId(),
+                LocalDateTime.now().plusDays(10)));
     }
 }

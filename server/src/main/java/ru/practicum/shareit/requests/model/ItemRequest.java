@@ -34,13 +34,19 @@ public class ItemRequest {
         this.created = created;
     }
 
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ItemRequest that = (ItemRequest) o;
-        return id == that.id && description.equals(that.description) && requester.equals(that.requester)
-                && created.equals(that.created);
+
+        ItemRequest request = (ItemRequest) o;
+
+        if (getId() != request.getId()) return false;
+        if (getDescription() != null ? !getDescription().equals(request.getDescription()) :
+                request.getDescription() != null)
+            return false;
+        if (getRequester() != null ? !getRequester().equals(request.getRequester()) : request.getRequester() != null)
+            return false;
+        return getCreated() != null ? getCreated().equals(request.getCreated()) : request.getCreated() == null;
     }
 
     @Override
