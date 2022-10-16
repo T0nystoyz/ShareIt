@@ -17,7 +17,6 @@ import ru.practicum.shareit.requests.model.ItemRequest;
 import ru.practicum.shareit.requests.repository.ItemRequestDAO;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserDAO;
-import ru.practicum.shareit.utils.exceptions.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -106,13 +104,6 @@ class ItemServiceTest {
         itemService.create(1L, itemDto);
         List<ItemDTO> items = itemService.findItemsByText(1, "", 1, 10);
         assertThat(items, equalTo(Collections.emptyList()));
-    }
-
-    @Test
-    @DirtiesContext
-    void findItemsByTextWithWrongParameterFrom() {
-        assertThrows(ValidationException.class, ()
-                -> itemService.findItemsByText(1, "обыч", -1, 10));
     }
 
     @Test

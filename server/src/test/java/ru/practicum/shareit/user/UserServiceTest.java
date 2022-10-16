@@ -14,7 +14,6 @@ import ru.practicum.shareit.user.model.UserMapper;
 import ru.practicum.shareit.user.repository.UserDAO;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 import ru.practicum.shareit.utils.exceptions.UserNotFoundException;
-import ru.practicum.shareit.utils.exceptions.ValidationException;
 
 import java.util.List;
 
@@ -42,13 +41,6 @@ class UserServiceTest {
         User created = userService.create(userDto);
         UserDTO readUser = userService.read(1);
         assertThat(readUser, equalTo(UserMapper.toDto(created)));
-    }
-
-    @Test
-    @DirtiesContext
-    void createWithFailedValidation() {
-        userDto.setEmail(null);
-        assertThrows(ValidationException.class, () -> userService.create(userDto));
     }
 
     @Test

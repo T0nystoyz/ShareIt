@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DataJpaTest
 class CommentDAOTest {
-    private final User user = new User(1, "имя", "имя@mail.ru");
-    private final ItemRequest request = new ItemRequest(1, "запрос", user, LocalDateTime.of(2022, 9, 9, 12, 12, 12));
-    private final Item item = new Item(1, "отвертка", "обычная", true, user, request);
+    private final User user = new User("имя", "имя@mail.ru");
+    private final ItemRequest request = new ItemRequest("запрос", user, LocalDateTime.of(2022, 9, 9, 12, 12, 12));
+    private final Item item = new Item("отвертка", "обычная", true, user, request);
     private final Comment comment = new Comment(1L, "комментарий", item, user, LocalDateTime.now());
     @Autowired
     private ItemDAO itemRepository;

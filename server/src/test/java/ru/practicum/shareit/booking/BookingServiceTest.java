@@ -97,16 +97,6 @@ class BookingServiceTest {
 
     @Test
     @DirtiesContext
-    void createWithWrongTime() {
-        userRepository.save(user);
-        userRepository.save(user2);
-        itemRepository.save(item);
-        bookingDto.setStart(LocalDateTime.of(2022, 12, 17, 12, 12, 12));
-        assertThrows(ValidationException.class, () -> bookingService.create(2, bookingDto));
-    }
-
-    @Test
-    @DirtiesContext
     void approveBooking() {
         userRepository.save(user);
         userRepository.save(user2);
