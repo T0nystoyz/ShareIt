@@ -6,7 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.utils.exceptions.*;
 
-import javax.validation.ConstraintViolationException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -15,16 +15,6 @@ import java.util.stream.Collectors;
 @RestController
 @ControllerAdvice
 public class ErrorHandlingControllerAdvice {
-
-    @ResponseBody
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ValidationErrorResponse onConstraintValidationException(ConstraintViolationException e) {
-        final List<Violation> violations = e.getConstraintViolations().stream()
-                .map(violation -> new Violation(violation.getPropertyPath().toString(), violation.getMessage()))
-                .collect(Collectors.toList());
-        return new ValidationErrorResponse(violations);
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -41,13 +31,6 @@ public class ErrorHandlingControllerAdvice {
     @ResponseBody
     public Map<String, String> handleWrongId(IndexOutOfBoundsException e) {
         return Map.of("error", "по такому айди данных нет " + e.getCause());
-    }
-
-    @ExceptionHandler(UniqueEmailException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ResponseBody
-    public ResponseEntity<String> onIdValidationIdException(UniqueEmailException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -112,14 +95,6 @@ public class ErrorHandlingControllerAdvice {
     @ResponseBody
     public ResponseEntity<String> handleBookingByOwner(OwnerBookingOwnItemException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
-
-    @ExceptionHandler(EmptyCommentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ResponseEntity<String> handleEmptyComment(EmptyCommentException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserIsNotOwnerException.class)

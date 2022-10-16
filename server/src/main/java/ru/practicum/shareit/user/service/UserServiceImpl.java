@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.model.UserDTO;
 import ru.practicum.shareit.user.model.UserMapper;
 import ru.practicum.shareit.user.repository.UserDAO;
 import ru.practicum.shareit.utils.exceptions.UserNotFoundException;
-import ru.practicum.shareit.utils.exceptions.ValidationException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(UserDTO userDto) {
-        validateUserDto(userDto);
+        //validateUserDto(userDto);
         User user = UserMapper.toUser(userDto);
         return userRepository.save(user);
     }
@@ -60,14 +59,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream()
                 .map(UserMapper::toDto)
                 .collect(Collectors.toList());
-    }
-
-    private void validateUserDto(UserDTO userDto) {
-        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
-            throw new ValidationException(String.format("нельзя создать пользователя %s без почтового ящика",
-                    userDto.getName()));
-        }
-        log.info("валидация нового пользователя c почтой {} прошла успешно", userDto.getEmail());
     }
 
     private void checkUserInDb(long userId) {

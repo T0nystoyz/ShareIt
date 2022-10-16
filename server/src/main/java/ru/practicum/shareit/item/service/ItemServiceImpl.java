@@ -14,7 +14,6 @@ import ru.practicum.shareit.item.repository.ItemDAO;
 import ru.practicum.shareit.requests.model.ItemRequest;
 import ru.practicum.shareit.requests.repository.ItemRequestDAO;
 import ru.practicum.shareit.user.repository.UserDAO;
-import ru.practicum.shareit.utils.exceptions.EmptyCommentException;
 import ru.practicum.shareit.utils.exceptions.UserIsNotOwnerException;
 import ru.practicum.shareit.utils.exceptions.UserNotFoundException;
 import ru.practicum.shareit.utils.exceptions.ValidationException;
@@ -40,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDTO create(long userId, ItemDTO itemDto) {
         checkUserInDb(userId);
-        validateItemDto(itemDto);
+        //validateItemDto(itemDto);
         ItemRequest request = itemDto.getRequestId() != null ?
                 requestRepository.getReferenceById(itemDto.getRequestId()) : null;
         Item item = ItemMapper.toItem(itemDto, request);
@@ -87,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDTO> getOwnersItems(long userId, int from, int size) {
-        validate(from);
+        //validate(from);
         checkUserInDb(userId);
         log.info("предметы во владении пользователя {}.", userRepository.getReferenceById(userId).getName());
         return itemRepository.searchItemsByOwnerIdOrderById(userId, PageRequest.of(from / size, size)).stream()
@@ -98,7 +97,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDTO> findItemsByText(long userId, String text, int from, int size) {
-        validate(from);
+        //validate(from);
         if (text.isBlank()) {
             return Collections.emptyList();
         }
@@ -111,7 +110,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentDTO createComment(long userId, long itemId, CommentDTO commentDto) {
         Comment comment = CommentMapper.toComment(commentDto);
-        checkCommentAndBooker(userId, itemId, comment);
+        checkBooker(userId, itemId);
         Item item = itemRepository.getReferenceById(itemId);
         comment.setItem(item);
         checkUserInDb(userId);
@@ -120,11 +119,7 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 
-    private void checkCommentAndBooker(long userId, long itemId, Comment comment) {
-        if (comment.getText().isEmpty()) {
-            throw new EmptyCommentException("нельзя создать пустой комментарий");
-        }
-
+    private void checkBooker(long userId, long itemId) {
         if (!bookingRepository.existsByItemIdAndBookerIdAndEndBefore(itemId, userId, LocalDateTime.now())) {
             throw new ValidationException("только арендатор может оставлять отзывы");
         }
@@ -164,20 +159,6 @@ public class ItemServiceImpl implements ItemService {
         log.info("проверка существования пользователя с id={} прошла успешно", userId);
     }
 
-    private void validateItemDto(ItemDTO itemDto) {
-        if (itemDto.getName() == null || itemDto.getName().isBlank()) {
-            throw new ValidationException(String.format("предмент %s не может быть без имени.", itemDto.getName()));
-        }
-        if (itemDto.getDescription() == null || itemDto.getDescription().isBlank()) {
-            throw new ValidationException(String.format("предмет %s не может быть без описания.", itemDto.getName()));
-        }
-        if (itemDto.getAvailable() == null) {
-            throw new ValidationException(String.format("предмет %s не может быть без статуса аренды.",
-                    itemDto.getName()));
-        }
-        log.info("валидация предмета {} прошла успешно", itemDto.getName());
-    }
-
     private List<CommentDTO> getComments(long itemId) {
         return commentRepository.findAllByItemId(itemId).stream()
                 .map(CommentMapper::toCommentDto).collect(Collectors.toList());
@@ -197,11 +178,5 @@ public class ItemServiceImpl implements ItemService {
                     userId));
         }
         log.info("валидация собственности предмета c id={} пользователем с id={} прошла успешно", itemId, userId);
-    }
-
-    private void validate(int from) {
-        if (from < 0) {
-            throw new ValidationException("параметр from меньше 0");
-        }
     }
 }

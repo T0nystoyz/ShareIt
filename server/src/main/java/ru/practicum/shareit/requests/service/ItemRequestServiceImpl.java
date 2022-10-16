@@ -15,7 +15,6 @@ import ru.practicum.shareit.requests.model.RequestMapper;
 import ru.practicum.shareit.requests.repository.ItemRequestDAO;
 import ru.practicum.shareit.user.repository.UserDAO;
 import ru.practicum.shareit.utils.exceptions.UserNotFoundException;
-import ru.practicum.shareit.utils.exceptions.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,14 +48,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestDto;
     }
 
-    /*@Override
-    public List<ItemRequestDTO> getUsersRequests(long userId) {
-        checkUserInDb(userId);
-        return requestRepository
-                .findByRequesterIdOrderByCreatedDesc(userId).stream()
-                .map(this::createItemRequestDto)
-                .collect(Collectors.toList());
-    }*/
     @Override
     public List<ItemRequestDTO> getUsersRequests(long userId) {
         checkUserInDb(userId);
@@ -69,7 +60,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDTO> readAll(long userId, int from, int size) {
         checkUserInDb(userId);
-        validate(from);
+        //validate(from);
         return requestRepository.findByRequesterIdNotOrderByCreatedDesc(userId,
                         PageRequest.of((from / size), size)).stream()
                 .map(RequestMapper::toItemRequestDto)
@@ -97,11 +88,5 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
         itemRequestDto.setItems(items);
-    }
-
-    private void validate(int from) {
-        if (from < 0) {
-            throw new ValidationException("параметр from меньше 0");
-        }
     }
 }

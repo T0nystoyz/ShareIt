@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.model.ResponseBookingDTO;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Slf4j
@@ -45,7 +44,7 @@ public class BookingController {
     @GetMapping
     public List<ResponseBookingDTO> getBookingsByUser(@RequestHeader("X-Sharer-User-Id") long userId,
                                                       @RequestParam(required = false, defaultValue = "ALL") State state,
-                                                      @Positive @Nullable @RequestParam(defaultValue = "1") int from,
+                                                      @Nullable @RequestParam(defaultValue = "1") int from,
                                                       @Nullable @RequestParam(defaultValue = "10") int size
     ) {
         log.info(":::GET /bookings userId={} просмотр всей аренды пользователем", userId);
@@ -56,7 +55,7 @@ public class BookingController {
     public List<ResponseBookingDTO> getBookingsByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
                                                        @RequestParam(required = false,
                                                                defaultValue = "ALL") State state,
-                                                       @Positive @Nullable @RequestParam(defaultValue = "1") int from,
+                                                       @Nullable @RequestParam(defaultValue = "1") int from,
                                                        @Nullable @RequestParam(defaultValue = "10") int size) {
         log.info(":::GET /bookings ownerId={} просмотр всей аренды собственником", ownerId);
         return bookingService.readBookingByOwner(ownerId, state, from, size);

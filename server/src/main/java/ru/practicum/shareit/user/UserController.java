@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserDTO;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -18,7 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public User create(@RequestBody @Valid UserDTO userDto) {
+    public User create(@RequestBody UserDTO userDto) {
         log.info(":::POST /users создание пользователя {}", userDto);
         return userService.create(userDto);
     }
@@ -31,7 +30,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public User update(@PathVariable long userId,
-                       @RequestBody @Valid UserDTO userDto) {
+                       @RequestBody UserDTO userDto) {
         log.info(":::PATCH /users обновление пользователя с id={} следующими данными {}", userId, userDto);
         return userService.update(userId, userDto);
     }

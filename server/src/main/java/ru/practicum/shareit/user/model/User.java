@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.model;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import java.util.Objects;
 
 @Entity
@@ -18,7 +17,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    @Email(message = "Ошибка в написании почтового ящика")
     private String email;
 
     public User(String name, String email) {

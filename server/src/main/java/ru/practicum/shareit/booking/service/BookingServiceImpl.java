@@ -35,7 +35,7 @@ public class BookingServiceImpl implements BookingService {
         isAvailable(itemRepository.getReferenceById(requestBookingDto.getItemId()));
         validateItemsOwner(userId, item);
         checkUserInDb(userId);
-        validateTime(requestBookingDto);
+        //validateTime(requestBookingDto);
         Booking booking = BookingMapper.toBooking(requestBookingDto);
         booking.setItem(item);
         booking.setBooker(userRepository.findById(userId));
@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<ResponseBookingDTO> readBookingByUser(long userId, State state, int from, int size) {
-        validate(from);
+        //validate(from);
         checkUserInDb(userId);
         List<Booking> list;
         switch (state) {
@@ -107,7 +107,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<ResponseBookingDTO> readBookingByOwner(long ownerId, State state, int from, int size) {
-        validate(from);
+        //validate(from);
         checkUserInDb(ownerId);
         List<Booking> list;
         switch (state) {
@@ -168,14 +168,6 @@ public class BookingServiceImpl implements BookingService {
         log.info("проверка существования бронирования с id={} пройдена", bookingId);
     }
 
-    private void validateTime(RequestBookingDTO requestBookingDto) {
-        if (requestBookingDto.getStart().isAfter(requestBookingDto.getEnd())) {
-            throw new ValidationException("начало не может быть позже окончания аренды");
-        }
-        log.info("валидация времени аренды прошла успешно: начало {} окончание {}", requestBookingDto.getStart(),
-                requestBookingDto.getEnd());
-    }
-
     private void validateOwnerOrBooker(long userId, long bookingId) {
         if (userId != bookingRepository.getReferenceById(bookingId).getItem().getOwner().getId()
                 && userId != bookingRepository.getReferenceById(bookingId).getBooker().getId()) {
@@ -205,12 +197,6 @@ public class BookingServiceImpl implements BookingService {
         }
         if (!(item.getAvailable())) {
             throw new ItemNotAvailableException("предмет недоступен");
-        }
-    }
-
-    private void validate(int from) {
-        if (from < 0) {
-            throw new ValidationException("параметр from меньше 0");
         }
     }
 }

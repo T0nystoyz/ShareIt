@@ -4,7 +4,6 @@ import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -20,7 +19,6 @@ public class ItemRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(insertable = false, updatable = false)
     private long id;
-    @NotNull
     private String description;
 
     @ManyToOne

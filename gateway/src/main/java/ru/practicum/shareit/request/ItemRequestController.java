@@ -7,6 +7,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 @Controller
 @RequestMapping(path = "/requests")
@@ -42,8 +44,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> readAll(@RequestHeader("X-Sharer-User-Id") long userId,
-                                          @Valid @RequestParam(name = "from", defaultValue = "1") int from,
-                                          @RequestParam(name = "size", defaultValue = "10") int size) {
+                                          @PositiveOrZero @Valid @RequestParam(name = "from", defaultValue = "1") int from,
+                                          @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info(":::GET /requests/all userId={} чтение всех запросов пользователем. from={}, size={}",
                 userId, from, size);
         return requestClient.readAll(userId, from, size);

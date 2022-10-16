@@ -8,9 +8,6 @@ import ru.practicum.shareit.item.model.CommentDTO;
 import ru.practicum.shareit.item.model.ItemDTO;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @Slf4j
@@ -44,7 +41,7 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDTO> getOwnersItems(@RequestHeader("X-Sharer-User-Id") long userId,
-                                        @PositiveOrZero @Nullable @RequestParam(defaultValue = "0") int from,
+                                        @Nullable @RequestParam(defaultValue = "0") int from,
                                         @Nullable @RequestParam(defaultValue = "10") int size) {
         log.info(":::GET /items/ userId={} чтение предметов собственника", userId);
         return itemService.getOwnersItems(userId, from, size);
@@ -53,16 +50,16 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDTO> findItemsByText(@RequestHeader("X-Sharer-User-Id") long userId,
                                          @RequestParam String text,
-                                         @PositiveOrZero @Nullable @RequestParam(defaultValue = "0") int from,
+                                         @Nullable @RequestParam(defaultValue = "0") int from,
                                          @Nullable @RequestParam(defaultValue = "10") int size) {
         log.info(":::GET /search?text={} поиск по тексту", text);
         return itemService.findItemsByText(userId, text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
-    CommentDTO createComment(@NotBlank @RequestHeader("X-Sharer-User-Id") long userId,
+    CommentDTO createComment(@RequestHeader("X-Sharer-User-Id") long userId,
                              @PathVariable long itemId,
-                             @RequestBody @Valid CommentDTO commentDto) {
+                             @RequestBody CommentDTO commentDto) {
         log.info(":::POST /items/{}/comment создание коммента пользователем", itemId);
         return itemService.createComment(userId, itemId, commentDto);
     }

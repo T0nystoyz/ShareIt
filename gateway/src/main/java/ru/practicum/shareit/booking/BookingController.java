@@ -11,6 +11,7 @@ import ru.practicum.shareit.booking.dto.RequestBookingDTO;
 import ru.practicum.shareit.booking.dto.State;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.HashMap;
@@ -26,9 +27,12 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> getBookingsByUser(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                    @RequestParam(name = "state", defaultValue = "all") String stateParam,
-                                                    @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                                    @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                                    @RequestParam(
+                                                            name = "state", defaultValue = "all") String stateParam,
+                                                    @PositiveOrZero @RequestParam(
+                                                            name = "from", defaultValue = "0") Integer from,
+                                                    @Positive @RequestParam(
+                                                            name = "size", defaultValue = "10") Integer size) {
         State state = State.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
         log.info(":::GET /bookings userId={} просмотр всей аренды пользователем", userId);
@@ -52,6 +56,8 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") long userId,
                                          @RequestBody @Valid RequestBookingDTO requestDto) {
+        validateTime(requestDto);
+
         log.info(":::POST /bookings userId={} создание аренды на предмет с id={}", userId,
                 requestDto.getItemId());
         return bookingClient.bookItem(userId, requestDto);
@@ -77,7 +83,22 @@ public class BookingController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Map<String, String>> errorHandler(IllegalArgumentException ex) {
         Map<String, String> resp = new HashMap<>();
-        resp.put("error", String.format("Unknown state: UNSUPPORTED_STATUS"));
+        resp.put("error", "Unknown state: UNSUPPORTED_STATUS");
         return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ResponseEntity<String> creatingWithWrongTime(ValidationException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    private void validateTime(RequestBookingDTO requestBookingDto) {
+        if (requestBookingDto.getStart().isAfter(requestBookingDto.getEnd())) {
+            throw new ValidationException("начало не может быть позже окончания аренды");
+        }
+        log.info("валидация времени аренды прошла успешно: начало {} окончание {}", requestBookingDto.getStart(),
+                requestBookingDto.getEnd());
     }
 }
