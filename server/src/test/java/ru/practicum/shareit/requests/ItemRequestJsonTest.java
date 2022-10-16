@@ -20,7 +20,7 @@ class ItemRequestJsonTest {
     private JacksonTester<ItemRequestDTO> jacksonTester;
 
     @Test
-    void ItemRequestJsonTest() throws IOException {
+    void itemRequestJsonTest() throws IOException {
         JsonContent<ItemRequestDTO> res = jacksonTester.write(itemRequestDto);
 
         assertThat(res).extractingJsonPathNumberValue("$.id").isEqualTo(1);

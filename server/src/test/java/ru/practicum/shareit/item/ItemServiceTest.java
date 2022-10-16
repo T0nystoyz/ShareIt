@@ -44,7 +44,7 @@ class ItemServiceTest {
     private final Item item = new Item(1, "", "", true, user, itemRequest);
 
     private final Comment comment = new Comment(1L, "комментарий", item, user,
-            LocalDateTime.of(2022, 12,12,12,12,12));
+            LocalDateTime.of(2022, 12, 12, 12, 12, 12));
     @Autowired
     private UserDAO userRepository;
     @Autowired
@@ -98,6 +98,7 @@ class ItemServiceTest {
         List<ItemDTO> items = itemService.findItemsByText(1, "обы", 1, 10);
         assertThat(items, equalTo(List.of(created)));
     }
+
     @Test
     @DirtiesContext
     void findItemsByEmptyText() {
@@ -116,7 +117,7 @@ class ItemServiceTest {
 
     @Test
     @DirtiesContext
-    void createComment(){
+    void createComment() {
         when(bookingRepository.existsByItemIdAndBookerIdAndEndBefore(anyLong(), anyLong(),
                 any(LocalDateTime.class))).thenReturn(true);
         userRepository.save(user);
@@ -127,6 +128,7 @@ class ItemServiceTest {
         List<CommentDTO> readComment = itemService.read(1, 1).getComments();
         assertTrue(readComment.get(0).getText().startsWith("комментарий"));
     }
+
     @Test
     @DirtiesContext
     void update() {

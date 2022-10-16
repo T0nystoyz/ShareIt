@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
     private final User user = new User(1, "имя", "имя@mail.ru");
-    private final UserDTO userDto = new UserDTO(1,"имя", "имя@mail.ru");
+    private final UserDTO userDto = new UserDTO(1, "имя", "имя@mail.ru");
 
     @Autowired
     private UserDAO userRepository;
@@ -43,6 +43,7 @@ class UserServiceTest {
         UserDTO readUser = userService.read(1);
         assertThat(readUser, equalTo(UserMapper.toDto(created)));
     }
+
     @Test
     @DirtiesContext
     void createWithFailedValidation() {

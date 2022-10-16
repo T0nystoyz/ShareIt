@@ -12,9 +12,10 @@ import static org.hamcrest.Matchers.equalTo;
 
 @DataJpaTest
 class UserDAOTest {
+    private final User user = new User(1, "имя", "имя@mail.ru");
     @Autowired
     private UserDAO userRepository;
-    private final User user = new User(1, "имя", "имя@mail.ru");
+
     @BeforeEach
     void setUp() {
         userRepository.save(user);

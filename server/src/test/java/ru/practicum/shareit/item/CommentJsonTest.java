@@ -16,13 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JsonTest
 class CommentJsonTest {
 
+    private final CommentDTO commentDto = new CommentDTO(1L, "", "", LocalDateTime.now());
     @Autowired
     private JacksonTester<CommentDTO> jacksonTester;
 
-    private final CommentDTO commentDto = new CommentDTO(1L, "", "", LocalDateTime.now());
-
     @Test
-    void CommentDtoTest() throws IOException {
+    void commentDtoTest() throws IOException {
         JsonContent<CommentDTO> res = jacksonTester.write(commentDto);
 
         assertThat(res).extractingJsonPathNumberValue("$.id").isEqualTo(1);

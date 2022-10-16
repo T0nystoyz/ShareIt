@@ -26,19 +26,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = ItemRequestController.class)
 public class ItemRequestControllerTest {
-    @Autowired
-    ObjectMapper mapper;
-
-    @MockBean
-    ItemRequestService service;
-
-    @Autowired
-    private MockMvc mvc;
-
-    private final RequestDTO requestDto = new RequestDTO(1,"запрос", 1,
+    private final RequestDTO requestDto = new RequestDTO(1, "запрос", 1,
             LocalDateTime.now().plusHours(2));
     private final ItemRequestDTO itemRequestDto = new ItemRequestDTO(1, null, "запрос",
             LocalDateTime.now().plusHours(2).toString());
+    @Autowired
+    ObjectMapper mapper;
+    @MockBean
+    ItemRequestService service;
+    @Autowired
+    private MockMvc mvc;
+
     @Test
     void create() throws Exception {
         when(service.create(anyLong(), any()))
@@ -68,7 +66,7 @@ public class ItemRequestControllerTest {
         verify(service, times(1)).read(1, 1);
     }
 
-   @Test
+    @Test
     void getAll() throws Exception {
         when(service.readAll(anyLong(), anyInt(), anyInt()))
                 .thenReturn(List.of(itemRequestDto));
@@ -78,7 +76,7 @@ public class ItemRequestControllerTest {
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(List.of(itemRequestDto))));
-       verify(service, times(1)).readAll(1, 1, 10);
+        verify(service, times(1)).readAll(1, 1, 10);
     }
 
     @Test

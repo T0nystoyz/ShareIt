@@ -88,9 +88,10 @@ public class UserControllerTest {
         mvc.perform(delete("/users/1"))
                 .andExpect(status().isOk());
     }
+
     @Test
     void readAll() throws Exception {
-                when(service.readAll())
+        when(service.readAll())
                 .thenReturn(List.of(userDto));
 
         mvc.perform(get("/users"))

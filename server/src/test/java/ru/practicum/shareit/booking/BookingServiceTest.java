@@ -171,6 +171,7 @@ class BookingServiceTest {
         List<ResponseBookingDTO> list = bookingService.readBookingByUser(2, State.ALL, 1, 10);
         assertThat(list.size(), equalTo(List.of(bookingDto, bookingDto2).size()));
     }
+
     @Test
     @DirtiesContext
     void readBookingByUserPast() {

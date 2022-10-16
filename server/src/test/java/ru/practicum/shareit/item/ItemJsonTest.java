@@ -14,14 +14,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JsonTest
 class ItemJsonTest {
 
+    private final ItemDTO itemDto = new ItemDTO(1L, "отвертка", "обычная", true, 1L,
+            null, null, null, 1L);
     @Autowired
     private JacksonTester<ItemDTO> jacksonTester;
 
-    private final ItemDTO itemDto = new ItemDTO(1L, "отвертка", "обычная", true, 1L,
-            null, null, null, 1L);
-
     @Test
-    void ItemJsonTest() throws IOException {
+    void itemJsonTest() throws IOException {
         JsonContent<ItemDTO> result = jacksonTester.write(itemDto);
 
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
