@@ -35,7 +35,6 @@ public class BookingServiceImpl implements BookingService {
         isAvailable(itemRepository.getReferenceById(requestBookingDto.getItemId()));
         validateItemsOwner(userId, item);
         checkUserInDb(userId);
-        //validateTime(requestBookingDto);
         Booking booking = BookingMapper.toBooking(requestBookingDto);
         booking.setItem(item);
         booking.setBooker(userRepository.findById(userId));
@@ -70,7 +69,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<ResponseBookingDTO> readBookingByUser(long userId, State state, int from, int size) {
-        //validate(from);
         checkUserInDb(userId);
         List<Booking> list;
         switch (state) {
@@ -107,7 +105,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<ResponseBookingDTO> readBookingByOwner(long ownerId, State state, int from, int size) {
-        //validate(from);
         checkUserInDb(ownerId);
         List<Booking> list;
         switch (state) {

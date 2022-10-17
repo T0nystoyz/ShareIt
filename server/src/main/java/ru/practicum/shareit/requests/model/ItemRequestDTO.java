@@ -13,8 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemRequestDTO {
-    long id;
-    List<ItemDTO> items;
+    private long id;
+    private List<ItemDTO> items;
     private String description;
     private String created;
 }

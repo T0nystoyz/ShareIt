@@ -39,7 +39,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDTO create(long userId, ItemDTO itemDto) {
         checkUserInDb(userId);
-        //validateItemDto(itemDto);
         ItemRequest request = itemDto.getRequestId() != null ?
                 requestRepository.getReferenceById(itemDto.getRequestId()) : null;
         Item item = ItemMapper.toItem(itemDto, request);
@@ -86,7 +85,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDTO> getOwnersItems(long userId, int from, int size) {
-        //validate(from);
         checkUserInDb(userId);
         log.info("предметы во владении пользователя {}.", userRepository.getReferenceById(userId).getName());
         return itemRepository.searchItemsByOwnerIdOrderById(userId, PageRequest.of(from / size, size)).stream()
@@ -97,7 +95,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDTO> findItemsByText(long userId, String text, int from, int size) {
-        //validate(from);
         if (text.isBlank()) {
             return Collections.emptyList();
         }
